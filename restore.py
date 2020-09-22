@@ -95,14 +95,13 @@ except Exception as e:
     sys.exit("Couldn't connect to database")
 
 backupdir = sys.argv[1].replace(".tar.gz", "")
+backupname = backupdir.split("/")[-1]
 
 print("Extracting backup")
 
 subprocess.run(["tar", "-xvzf", backupdir+".tar.gz", "-C", "/mnt/HD/HD_a2/"], check=True)
 
 print("Restoring tables")
-
-backupdir = backupdir.replace("/mnt/USB/USB1", "")
 
 for table in tables:
     print("Restoring "+table)
@@ -112,7 +111,7 @@ for table in tables:
         cursor.execute("TRUNCATE TABLE "+table+";")
         database.commit()
         print("3")
-        cursor.execute("LOAD DATA INFILE '/mnt/HD/HD_a2/"+backupdir+"/"+table+"' INTO TABLE "+table+";")
+        cursor.execute("LOAD DATA INFILE '/mnt/HD/HD_a2/"+backupname+"/"+table+"' INTO TABLE "+table+";")
         database.commit()
 
     except Exception as e:
