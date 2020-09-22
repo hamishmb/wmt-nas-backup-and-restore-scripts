@@ -94,7 +94,7 @@ except Exception as e:
 
     sys.exit("Couldn't connect to database")
 
-backupdir = sys.argv[1]
+backupdir = sys.argv[1].replace(".tar.gz", "")
 
 print("Extracting backup")
 
