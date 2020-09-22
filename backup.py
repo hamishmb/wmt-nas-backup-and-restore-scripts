@@ -32,7 +32,10 @@ tables = ['SystemStatus', 'EventLog', 'SystemTick', 'NASControl', 'SUMPReadings'
 #Try to mount USB stick if not mounted.
 if not os.path.isdir("/mnt/USB/USB1/"):
     os.makedirs("/mnt/USB/USB1")
-    subprocess.run(["mount", "-t", "ext2", "/dev/sdc1", "/mnt/USB/USB1"], check=False)
+    cmd = subprocess.run(["mount", "-t", "ext2", "/dev/sdc1", "/mnt/USB/USB1"],
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True)
+
+    print("Mount output: "+cmd.stdout.decode("UTF-8", errors="ignore"))
 
 #If the file still isn't there then either not mounted or not the backup drive.
 if not os.path.isfile("/mnt/USB/USB1/is_backupdrive"):
@@ -45,7 +48,9 @@ try:
 
     cursor = database.cursor()
 
-except:
+except Exception as e:
+    print("Error conecting to database: "+str(e))
+
     #Try to clean up gracefully.
     try:
         cursor.close()
@@ -71,8 +76,8 @@ for table in tables:
         cursor.execute("SELECT * INTO OUTFILE '"+backupdir+"' from "+table+";")
         database.commit()
 
-    except:
-        print("Couldn't backup table: "+table)
+    except Exception as e:
+        print("Couldn't backup table: "+table+", error was: "+str(e))
 
     print("Done!")
 
