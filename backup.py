@@ -1,4 +1,4 @@
-#!//usr/bin/env python3
+#!/usr/bin/env python3
 # NAS box backup script.
 # Copyright (C) 2020 Wimborne Model Town
 # This program is free software: you can redistribute it and/or modify it
