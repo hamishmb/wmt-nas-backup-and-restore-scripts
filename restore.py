@@ -12,6 +12,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#Version 1.0.
+
 import os
 import sys
 import subprocess
@@ -107,10 +110,8 @@ for table in tables:
     print("Restoring "+table)
 
     try:
-        print("2")
         cursor.execute("TRUNCATE TABLE "+table+";")
         database.commit()
-        print("3")
         cursor.execute("LOAD DATA INFILE '/mnt/HD/HD_a2/"+backupname+"/"+table+"' INTO TABLE "+table+";")
         database.commit()
 
