@@ -1,1 +1,2 @@
+#!/bin/ash
 echo $PATH
