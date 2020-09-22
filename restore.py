@@ -106,12 +106,16 @@ for table in tables:
     print("Restoring "+table)
 
     try:
+        print("1")
         cursor.execute("LOCK TABLES "+table+" WRITE;")
         database.commit()
+        print("2")
         cursor.execute("TRUNCATE TABLE "+table+";")
         database.commit()
+        print("3")
         cursor.execute("LOAD DATA INFILE '/mnt/HD/HD_a2/"+backupdir+"/"+table+"' INTO TABLE "+table+";")
         database.commit()
+        print("4")
         cursor.execute("UNLOCK TABLES;")
         database.commit()
 
