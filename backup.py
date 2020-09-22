@@ -43,7 +43,7 @@ if not os.path.isfile("/mnt/USB/USB1/is_backupdrive"):
 
 try:
     #Connect to database w/ nasbox creds.
-    database = mysql.connect(host="127.0.0.1", port=3306, user="nasbox", passwd="river20",
+    database = mysql.connect(host="127.0.0.1", port=3306, user="backupuser", passwd="river20",
                              connect_timeout=30, db="rivercontrolsystem")
 
     cursor = database.cursor()
