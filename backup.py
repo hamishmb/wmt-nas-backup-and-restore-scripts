@@ -30,7 +30,7 @@ tables = ['SystemStatus', 'EventLog', 'SystemTick', 'NASControl', 'SUMPReadings'
           'VALVE12Control']
 
 #Try to mount USB stick if not mounted.
-if not os.path.isfile("/mnt/USB/USB1/is_backupdrive"):
+if not os.path.isfile("/mnt/USB/USB1/"):
     os.makedirs("/mnt/USB/USB1")
     subprocess.run(["mount", "-t", "ext4", "/dev/sdc1", "/mnt/USB/USB1"], check=False)
 
