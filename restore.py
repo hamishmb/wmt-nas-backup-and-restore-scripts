@@ -102,6 +102,8 @@ subprocess.run(["tar", "-xvzf", backupdir+".tar.gz", "-C", "/mnt/HD/HD_a2/"], ch
 
 print("Restoring tables")
 
+backupdir = backupdir.replace("/mnt/USB/USB1", "")
+
 for table in tables:
     print("Restoring "+table)
 
