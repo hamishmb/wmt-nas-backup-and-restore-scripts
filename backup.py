@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
+import shutil
 import subprocess
 import datetime
 import MySQLdb as mysql
@@ -80,5 +81,10 @@ for table in tables:
         print("Couldn't backup table: "+table+", error was: "+str(e))
 
     print("Done!")
+
+print("Compressing backup with tar and gzip")
+
+subprocess.run(["tar", "-cvzf", backupdir+".tar.gz", backupdir], check=True)
+shutil.rmtree(backupdir)
 
 print("Finished")
