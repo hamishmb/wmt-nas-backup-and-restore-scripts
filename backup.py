@@ -67,7 +67,8 @@ except Exception as e:
 
     sys.exit("Couldn't connect to database")
 
-backupdir = "/mnt/USB/USB1/backup-"+str(datetime.datetime.now())
+os.chdir("/mnt/USB/USB1/")
+backupdir = "backup-"+str(datetime.datetime.now())
 os.makedirs(backupdir)
 
 for table in tables:
