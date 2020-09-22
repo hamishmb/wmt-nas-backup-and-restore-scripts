@@ -73,7 +73,7 @@ for table in tables:
     print("Backing up "+table)
 
     try:
-        cursor.execute("SELECT * INTO OUTFILE '"+backupdir+"' from "+table+";")
+        cursor.execute("SELECT * INTO OUTFILE '"+backupdir+"/"+table+"' from "+table+";")
         database.commit()
 
     except Exception as e:
