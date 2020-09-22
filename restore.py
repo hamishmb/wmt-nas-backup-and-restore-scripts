@@ -1,5 +1,5 @@
 #!//usr/bin/env python3
-# NAS box backup script.
+# NAS box restore script.
 # Copyright (C) 2020 Wimborne Model Town
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 3 or,
@@ -14,12 +14,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
-import shutil
 import subprocess
-import datetime
 import MySQLdb as mysql
 
-#Tables to backup.
+def usage():
+    """
+    This function is used to output help information to the standard output
+    if the user passes invalid/incorrect commandline arguments.
+
+    Usage:
+
+    >>> usage()
+    """
+
+    print("\nUsage: restore.py [OPTION]\n\n")
+    print("Options:\n")
+    print("       -h, --help:                   Show this help message")
+    print("       <file>                        The database archive to restore from")
+    print("restore.py is released under the GNU GPL Version 3")
+    print("Copyright (C) Wimborne Model Town 2020")
+
+    sys.exit()
+
+#Check commandline args.
+if len(sys.argv) < 2:
+    usage()
+
+elif sys.argv[1] in ("-h", "--help"):
+    usage()
+
+elif not os.path.isfile(sys.argv[1]):
+    sys.exit("Please specify a valid backup file")
+
+#Tables to restore.
 tables = ['SystemStatus', 'EventLog', 'SystemTick', 'NASControl', 'SUMPReadings', 'SUMPControl',
           'G3Readings', 'G3Control', 'G4Readings', 'G4Control', 'G5Readings', 'G5Control',
           'G6Readings', 'G6Control', 'VALVE1Readings', 'VALVE1Control', 'VALVE2Readings',
@@ -67,25 +94,30 @@ except Exception as e:
 
     sys.exit("Couldn't connect to database")
 
-os.chdir("/mnt/USB/USB1/")
-backupdir = "backup-"+str(datetime.datetime.now())
-os.makedirs(backupdir)
+backupdir = sys.argv[1]
+
+print("Extracting backup")
+
+subprocess.run(["tar", "-xvzf", backupdir+".tar.gz", "-C", "/mnt/HD/HD_a2/"], check=True)
+
+print("Restoring tables")
 
 for table in tables:
-    print("Backing up "+table)
+    print("Restoring "+table)
 
     try:
-        cursor.execute("SELECT * INTO OUTFILE '/mnt/USB/USB1/"+backupdir+"/"+table+"' from "+table+";")
+        cursor.execute("LOCK TABLES "+table+" WRITE;")
+        database.commit()
+        cursor.execute("TRUNCATE TABLE "+table+";")
+        database.commit()
+        cursor.execute("LOAD DATA INFILE '/mnt/HD/HD_a2/"+backupdir+"/"+table+"' INTO TABLE "+table+";")
+        database.commit()
+        cursor.execute("UNLOCK TABLES;")
         database.commit()
 
     except Exception as e:
-        print("Couldn't backup table: "+table+", error was: "+str(e))
+        print("Couldn't restore table: "+table+", error was: "+str(e))
 
     print("Done!")
-
-print("Compressing backup with tar and gzip")
-
-subprocess.run(["tar", "-cvzf", backupdir+".tar.gz", backupdir], check=True)
-shutil.rmtree(backupdir)
 
 print("Finished")
